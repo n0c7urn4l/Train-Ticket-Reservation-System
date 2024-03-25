@@ -94,6 +94,7 @@ CREATE TABLE BOOKING(
     arrivalStation INTEGER NOT NULL,
     class VARCHAR(20) NOT NULL,
     seatNumber INTEGER NOT NULL,
+    isPaid BOOLEAN NOT NULL DEFAULT false,
     PRIMARY KEY (bookingId),
     FOREIGN KEY (trainId) REFERENCES TRAIN(trainId) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (departureStation) REFERENCES STATION(stationId) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -125,8 +126,8 @@ INSERT INTO LOGIN (loginId, username, password) VALUES
 (1, 'admin', 'admin123'),
 (3, 'ticketclerk1', 'ticket123'),
 (2, 'stationMaster1', 'stationMaster123'),
-(4, 'customer1', 'ticket123'),
-(5, 'customer2', 'stationMaster123');
+(4, 'customer1', 'customer1-123'),
+(5, 'customer2', 'customer2-123');
 
 INSERT INTO STAFF (staffId, roleId, loginId, name, nic, address, birthday) VALUES
 (1, 1, 1, 'Achintha Pallegedara', '200121803157', '123 Main St, Anytown', '2001-08-05'),
@@ -168,9 +169,9 @@ INSERT INTO SCHEDULE (scheduleId, stationId, arrivalTime, departureTime, weekday
 (10, 4, '16:50:00', '16:55:00', 'Saturday', 4),
 (11, 5, '20:30:00', '20:33:00', 'Saturday', 4);
 
-INSERT INTO BOOKING (bookingId, nic, trainId, time, departureStation, arrivalStation, class, seatNumber) VALUES
-(1, '200086202642', 1, '2024-03-24 07:30:00', 1, 3, 'First Class', 25),
-(2, '200083452642', 3, '2024-03-24 10:30:00', 1, 4, 'Economy Class', 42);
+INSERT INTO BOOKING (bookingId, nic, trainId, time, departureStation, arrivalStation, class, seatNumber, isPaid ) VALUES
+(1, '200086202642', 1, '2024-03-24 07:30:00', 1, 3, 'First Class', 25, true),
+(2, '200083452642', 3, '2024-03-24 10:30:00', 1, 4, 'Economy Class', 42, true);
 
 INSERT INTO PAYMENT (payId, bookingId, amount, date) VALUES
 (1, 1, 130.00, '2024-03-23 08:00:00'),
@@ -181,7 +182,17 @@ INSERT INTO PAYMENT (payId, bookingId, amount, date) VALUES
 DELETE FROM TRAIN
 	WHERE trainId = 3;
 
+-- Update a phone number
 
+UPDATE CUSTOMER
+SET phoneNumber = "0765439821"
+WHERE nic = "200086202642";
 
+-- Select stations that a particular train stops
 
+SELECT s.name, sc.arrivalTime, sc.departureTime 
+FROM schedule AS sc 
+INNER JOIN station AS s ON s.stationId = sc.stationId 
+WHERE sc.trainId = 1
+ORDER BY sc.arrivalTime;
 
